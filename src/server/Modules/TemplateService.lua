@@ -1,7 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Signal = require(ReplicatedStorage.Shared.Packets.Signal)
 
-local Client = {
-	Test = "e",
+local Server = {
+	Test = "e";
+	Test1 = Signal.new();
 }
 
 -------------------------
@@ -24,12 +26,13 @@ local Client = {
 -- FRAMEWORK INIT --
 -------------------------
 
-function Client:Init()
-	print("Client Init")
+function Server:Init()
+	print("Server Init")
+	print(self)
 end
 
-function Client:Start()
-	print("Client Start")
+function Server:Start()
+	print("Server Start")
 end
 
-return Client
+return Server

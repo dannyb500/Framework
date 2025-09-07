@@ -19,7 +19,7 @@ local RunService = game:GetService("RunService")
 -- VARIABLES --
 -------------------------
 local isServer = RunService:IsServer() and "Server" or "Client"
-local ignoreServer = true -- True: yeidls until server modules have loaded
+local ignoreServer = false -- True: yeidls until server modules have loaded
 
 local Index = script.Parent:WaitForChild("_index")
 
@@ -171,6 +171,13 @@ end
 	@desc Inits all modules that have an Init function
 ]]
 function Shared:Init()
+	print(self,"FRAMEWORK")
+	for _,Module in self.Interop do
+		Module._index = self._index
+		Module.Interop = self.Interop
+		Module._events = Module._events or {}
+	end
+
 	for _, module in self._index do
 		if typeof(module) == "table" and typeof(module.Init) == "function" then
 			module:Init()
@@ -188,6 +195,11 @@ end
 	@desc Starts all modules that have a Start function
 ]]
 function Shared:Start()
+
+	if isServer == "Server" then
+		script:SetAttribute("CanStart", true)
+	end
+
 	for _, module in self._index do
 		if typeof(module) == "table" and typeof(module.Start) == "function" then
 			module:Start()
