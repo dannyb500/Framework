@@ -95,5 +95,10 @@ function Remote:GetRemoteFolder()
 	return Store
 end
 
+function Remote:Destroy()
+	self._trove:Destroy()
+	setmetatable(self,nil)
+end
+
 
 return Remote

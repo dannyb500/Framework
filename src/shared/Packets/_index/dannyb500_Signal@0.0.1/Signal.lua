@@ -47,6 +47,16 @@ function Signal:Fire(...: (any) -> ())
 	end
 end
 
+--[[
+	@public
+	@function Destroy()
+	
+	Destroys the signal
+]]
+function Signal:Destroy()
+	self.Disconnect()
+	setmetatable(self,nil)
+end
 
 
 

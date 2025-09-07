@@ -1,8 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Types = require(ReplicatedStorage.Shared.Packets:WaitForChild("Types"))
 
 local Client = {
 	Test = "e",
-}
+ } :: Types.FrameworkPacket
 
 -------------------------
 -- SERVICES --
@@ -24,7 +25,7 @@ local Client = {
 -- FRAMEWORK INIT --
 -------------------------
 
-function Client:Init()
+function Client:Init(self: Types.FrameworkPacket)
 	print("Client Init")
 end
 
