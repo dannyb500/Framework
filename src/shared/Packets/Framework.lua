@@ -58,9 +58,9 @@ end
 local function AttemptRequire(Module: ModuleScript)
 	local Loaded = nil
 	xpcall(function()
-		task.spawn(function()
+		-- task.spawn(function()
 			Loaded = require(Module)
-		end)
+		-- end)
 	end, function()
 		error(`Failed to require {Module.Name} : {debug.traceback()}`)
 	end)
@@ -195,7 +195,6 @@ end
 	@desc Starts all modules that have a Start function
 ]]
 function Shared:Start()
-
 	if isServer == "Server" then
 		script:SetAttribute("CanStart", true)
 	end
@@ -212,4 +211,17 @@ function Shared:Start()
 	end
 end
 
-return Shared
+return setmetatable(Shared, {
+	__index = function(t, i)
+		local value = rawget(t, i)
+		if value == nil then
+			return nil
+		else
+			return value
+		end
+	end,
+	__newindex = function()
+		error("Cannot modify read-only table")
+	end,
+	__metatable = "protected",
+})

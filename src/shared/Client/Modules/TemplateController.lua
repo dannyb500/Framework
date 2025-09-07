@@ -25,7 +25,7 @@ local Client = {
 -- FRAMEWORK INIT --
 -------------------------
 
-function Client:Init(self: Types.FrameworkPacket)
+function Client:Init()
 	print("Client Init")
 end
 

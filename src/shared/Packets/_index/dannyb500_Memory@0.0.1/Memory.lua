@@ -1,6 +1,7 @@
 --!strict
-local Vec3 = require("../dannyb500_Serialize@0.0.1/Vec3")
-local CFrame = require("../dannyb500_Serialize@0.0.1/CFrame")
+local Serialize = require("../dannyb500_Serialize@0.0.1/Serialize")
+local CFrame = Serialize.CFrame
+local Vec3 = Serialize.Vec3
 
 local Memory = {}
 Memory.__index = Memory
