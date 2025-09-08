@@ -67,6 +67,23 @@ local function DeserializeCF(b)
 	return CFrame.new(x, y, z, R00, R01, R02, R10, R11, R12, R20, R21, R22)
 end
 
+local function EditCF(b: buffer, k: CFrame)
+	local x, y, z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = k:GetComponents()
+	buffer.writef32(b, 0, x)
+	buffer.writef32(b, 4, y)
+	buffer.writef32(b, 8, z)
+	buffer.writef32(b, 12, R00)
+	buffer.writef32(b, 16, R01)
+	buffer.writef32(b, 20, R02)
+	buffer.writef32(b, 24, R10)
+	buffer.writef32(b, 28, R11)
+	buffer.writef32(b, 32, R12)
+	buffer.writef32(b, 36, R20)
+	buffer.writef32(b, 40, R21)
+	buffer.writef32(b, 44, R22)
+	return b
+end
+
 local function EditBufferCF(b: buffer,k: CFrame)
 	local pos,x,y,z = k.Position,k:ToOrientation()
 	buffer.writef32(b,0,pos.X)
@@ -85,5 +102,6 @@ return {
 	
 	serializecf = SerializeCF;
 	deserializecf = DeserializeCF;
-	editcf = EditBufferCF;
+	edit = EditBufferCF;
+	editcf = EditCF;
 }
