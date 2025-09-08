@@ -26,7 +26,13 @@ local Client = {
 -------------------------
 
 function Client:Init()
-	print("Client Init")
+	print("--- Framework Client ---")
+	print(self)
+
+	local BufferTest = self._index.Serialize.CFrame.serialize(CFrame.new(1,10,1))
+	print(BufferTest)
+	print(self._index.Serialize.CFrame.deserialize(BufferTest))
+	print("------------------------")
 end
 
 function Client:Start()
