@@ -1,6 +1,9 @@
 # Packets;
 Framework
 
+
+
+
 ```lua
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -13,6 +16,8 @@ Framework:Start();
 
 ```
 # Classes: _index
-[Buffers](docs/Buffer.md)
+- [Instance](docs/Instance.md)
+- [Buffers](docs/Buffer.md)
+- [Signal](docs/Signal.md)
 
 

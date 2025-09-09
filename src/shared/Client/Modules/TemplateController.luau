@@ -3,7 +3,7 @@ local Types = require(ReplicatedStorage.Shared.Packets:WaitForChild("Types"))
 
 local Client = {
 	Test = "e",
- } :: Types.FrameworkPacket
+} :: Types.FrameworkPacket
 
 -------------------------
 -- SERVICES --
@@ -26,13 +26,24 @@ local Client = {
 -------------------------
 
 function Client:Init()
-	print("--- Framework Client ---")
-	print(self)
+	print("Client Init")
+	local Keyboard = self._index.Input.Keyboard.new()
+	Keyboard.KeyDown:Connect(function(Key: Enum.KeyCode)
+		print("DOWN",Key)
+	end) 
+	Keyboard.KeyUp:Connect(function(Key: Enum.KeyCode)
+		print("UP", Key)
+	end)
 
-	local BufferTest = self._index.Serialize.CFrame.serialize(CFrame.new(1,10,1))
-	print(BufferTest)
-	print(self._index.Serialize.CFrame.deserialize(BufferTest))
-	print("------------------------")
+	local Gamepad = self._index.Input.Gamepad.new()
+	local isConnected = Gamepad.IsGamepadConnected()
+	print("ControllerIsConnected", isConnected)
+	Gamepad.ButtonDown:Connect(function(Key: Enum.KeyCode)
+		print("DOWN",Key)
+	end) 
+	Gamepad.ButtonUp:Connect(function(Key: Enum.KeyCode)
+		print("UP", Key)
+	end)
 end
 
 function Client:Start()
