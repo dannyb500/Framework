@@ -149,6 +149,8 @@ function Shared.new()
 	local self = setmetatable({}, Shared)
 	self._index = LoadClasses()
 	self.Interop = {}
+	self._loaded = false;
+	self._started = false;
 
 	return self
 end
@@ -172,6 +174,9 @@ end
 ]]
 function Shared:Init()
 	print(self,"FRAMEWORK")
+	if self._loaded then
+		return warn("Already loaded")
+	end
 	for _,Module in self.Interop do
 		Module._index = self._index
 		Module.Interop = self.Interop
@@ -188,6 +193,8 @@ function Shared:Init()
 			module:Init()
 		end
 	end
+	self._loaded = true
+	return true
 end
 
 --[[
@@ -197,6 +204,9 @@ end
 function Shared:Start()
 	if isServer == "Server" then
 		script:SetAttribute("CanStart", true)
+	end
+	if self._started then
+		return warn("Already started")
 	end
 
 	for _, module in self._index do
@@ -209,6 +219,8 @@ function Shared:Start()
 			module:Start()
 		end
 	end
+	self._started = true
+	return true
 end
 
 return setmetatable(Shared, {

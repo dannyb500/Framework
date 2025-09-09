@@ -64,7 +64,7 @@ local function StartRun()
 end
 
 
-function Ins:ApplyProperties(Object: Instance,Properties: {Property: string},Parent)
+function Ins:ApplyProperties(Object: {Connect: () -> ()},Properties: {Property: string},Parent)
 	assert(Object,"Object is nil")
 	assert(typeof(Properties) == "table","Properties is not a table")
 
@@ -100,7 +100,7 @@ function Ins:ApplyProperties(Object: Instance,Properties: {Property: string},Par
 	end
 end
 
-function Ins:BindEvents(Object: Instance, Events: {[string]: () -> ()})
+function Ins:BindEvents(Object: {Connect: () -> ()}, Events: {[string]: () -> ()})
 	assert(Object, "Object is nil")
 	assert(typeof(Events) == "table", "Events is not a table")
 
@@ -115,7 +115,7 @@ function Ins:BindEvents(Object: Instance, Events: {[string]: () -> ()})
 	end
 end
 
-function Ins.new(Object:string, Properties: {})
+function Ins.new(Object:string, Properties: {[string]: any})
 	assert(Object,"Object is nil")
 
 	local NewObject = Instance.new(Object)

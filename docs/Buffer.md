@@ -32,3 +32,5 @@ serialize: (string) -> (buffer)
 deserialize: (buffer,number) -> (string)  
 edit: (buffer,string) -> (buffer)
 ```
+#
+#### [Back](../README.md)

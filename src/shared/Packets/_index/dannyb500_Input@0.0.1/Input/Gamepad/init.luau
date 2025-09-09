@@ -24,7 +24,7 @@ function Gamepad.new()
 	self.ButtonDown = Signal.new()
 	self._trove = Trove.new()
 
-	self._trove:Connect(UserInputService.GamepadConnected,function(gamepadNum: Enum.UserInputType) 
+	self._trove:Connect(UserInputService.GamepadConnected,function(_: Enum.UserInputType) 
 		self.GAMEPAD = GetGamepad()
 	end)
 
@@ -68,7 +68,7 @@ function Gamepad:StopMotor(Motor: Enum.VibrationMotor)
 	if Motor then
 		self:PulseMotor(Motor,0,0)
 	else
-		for i,v in Enum.VibrationMotor:GetEnumItems() do
+		for _,v in Enum.VibrationMotor:GetEnumItems() do
 			self:PulseMotor(v,0,0)
 		end
 	end

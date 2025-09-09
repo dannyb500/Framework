@@ -1,4 +1,5 @@
-# SIGNALS
+# INPUT
+
 
 ### EXAMPLE 
 # KEYBOARD:
@@ -26,3 +27,5 @@ Gamepad.ButtonUp:Connect(function(Key: Enum.KeyCode)
 end)
 
 ```
+#
+#### [Back](../README.md)
