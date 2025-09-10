@@ -1,10 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Signal = require(ReplicatedStorage.Shared.Packets.Signal)
+local Types = require(ReplicatedStorage.Shared.Packets:WaitForChild("Types"))
 
-local Server = {
-	Test = "e";
-	Test1 = Signal.new(false);
-}
+local Client = {
+	_READONLY = true;
+} :: Types.FrameworkPacket
 
 -------------------------
 -- SERVICES --
@@ -26,13 +25,12 @@ local Server = {
 -- FRAMEWORK INIT --
 -------------------------
 
-function Server:Init()
-	print("Server Init")
-	print(self)
+function Client:Init()
+
 end
 
-function Server:Start()
-	print("Server Start")
+function Client:Start()
+	-- self.thing = "e" -- will prevent due to read-only
 end
 
-return Server
+return Client

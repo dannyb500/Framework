@@ -16,6 +16,15 @@ function Signal.new()
 			table.remove(self.Callback,i)
 		end
 	end
+	self.DisconnectOne = function(Callback: () -> ())
+		for i,fnc in self.Callback do
+			if fnc ~= Callback then
+				continue
+			end
+			table.remove(self.Callback,i)
+			break
+		end
+	end
 	return self
 end
 
@@ -45,6 +54,18 @@ function Signal:Fire(...: (any) -> ())
 	for _,fnc in self.Callback do
 		fnc(...)
 	end
+end
+
+--[[
+	@public
+	@function Once()
+	Connects a function that disconnects after being fired once
+]]
+function Signal:Once(Callback: () -> ())
+	self:Connect(function(...)
+		Callback(...)
+		self.Disconnect()
+	end)
 end
 
 --[[

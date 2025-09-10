@@ -90,4 +90,6 @@ function Gamepad:Destroy()
 	self._trove:Destroy()
 end
 
+
+
 return Gamepad

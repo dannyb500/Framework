@@ -59,11 +59,29 @@ local function AttemptRequire(Module: ModuleScript)
 	local Loaded = nil
 	xpcall(function()
 		-- task.spawn(function()
-			Loaded = require(Module)
+		Loaded = require(Module)
 		-- end)
 	end, function()
 		error(`Failed to require {Module.Name} : {debug.traceback()}`)
 	end)
+	if Loaded then
+		return setmetatable(Loaded, {
+			__index = function(self, i)
+				if rawget(self, i) == nil then
+					return nil
+				else
+					return rawget(self, i)
+				end
+			end,
+			__newindex = function(_,k,v)
+				if Loaded._READONLY then
+					error(`{Module.Name} IS READ-ONLY | KEY:{k} VALUE:{v}`,3)
+				end
+			end,
+			__metatable = "protected",
+		})
+	end
+
 	print(`{Module.Name} required`, Loaded)
 	return Loaded
 end
@@ -75,9 +93,9 @@ end
 ]]
 local function Construct(Modules)
 	for Name, Module in Modules do
-		Module.Interop = {}
-		Module._events = {}
-		Module._index = {}
+		rawset(Module, `Interop`, {})
+		rawset(Module, `_events`, {})
+		rawset(Module, `_index`, {})
 
 		for Key, Value in Module do
 			if typeof(Value) ~= "table" then
@@ -120,7 +138,7 @@ local function LoadModules(Containers: { Folder })
 		return warn("Cannot load")
 	end
 	local Modules = {}
-	
+
 	for _, Container: Folder in Containers do
 		for _, Module: Instance in Container:GetChildren() do
 			if not Module:IsA("ModuleScript") then
@@ -149,8 +167,8 @@ function Shared.new()
 	local self = setmetatable({}, Shared)
 	self._index = LoadClasses()
 	self.Interop = {}
-	self._loaded = false;
-	self._started = false;
+	self._loaded = false
+	self._started = false
 
 	return self
 end
@@ -173,14 +191,14 @@ end
 	@desc Inits all modules that have an Init function
 ]]
 function Shared:Init()
-	print(self,"FRAMEWORK")
+	print(self, "FRAMEWORK")
 	if self._loaded then
 		return warn("Already loaded")
 	end
-	for _,Module in self.Interop do
-		Module._index = self._index
-		Module.Interop = self.Interop
-		Module._events = Module._events or {}
+	for _, Module in self.Interop do
+		rawset(Module, `_index`, self._index)
+		rawset(Module, `Interop`, self.Interop)
+		rawset(Module, `_events`, Module._events or {})
 	end
 
 	for _, module in self._index do
