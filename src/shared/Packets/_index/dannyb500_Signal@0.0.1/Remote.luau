@@ -4,11 +4,12 @@ local Signal = require("./Signal")
 
 local RunService = game:GetService("RunService")
 
-local Store = Instance.new("Folder")
+
+local IsServer = RunService:IsServer()
+local Store = if IsServer then script:WaitForChild("Remotes") else Instance.new("Folder")
 Store.Name = "Remotes"
 Store.Parent = script
 
-local IsServer = RunService:IsServer()
 
 local Remote = {}
 Remote.__index = Remote
@@ -44,7 +45,8 @@ function Remote.new(MobuleName: string,Name: string, Type: string | RemoteEvent)
 		local Dir = MkDir(MobuleName)
 		self._event.Name = Name
 		self._event.Parent = Dir
-
+		print(self)
+		warn("HERE")
 		self._trove:Connect(self._event.OnServerEvent,function(...)
 			self._signal:Fire(...)
 		end)
