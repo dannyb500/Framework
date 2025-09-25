@@ -73,9 +73,9 @@ local function AttemptRequire(Module: ModuleScript)
 					return rawget(self, i)
 				end
 			end,
-			__newindex = function(_,k,v)
+			__newindex = function(_, k, v)
 				if Loaded._READONLY then
-					error(`{Module.Name} IS READ-ONLY | KEY:{k} VALUE:{v}`,3)
+					error(`{Module.Name} IS READ-ONLY | KEY:{k} VALUE:{v}`, 3)
 				end
 			end,
 			__metatable = "protected",
@@ -89,7 +89,8 @@ end
 --[[
 	@private 
 	@function Construct
-	@desc Inits all Signals for remove events¬
+	@desc Inits all Signals for remote events
+	--some horrible looking code fr 
 ]]
 local function Construct(Modules)
 	for Name, Module in Modules do
@@ -97,16 +98,31 @@ local function Construct(Modules)
 		rawset(Module, `_events`, {})
 		rawset(Module, `_index`, {})
 
-		for Key, Value in Module do
-			if typeof(Value) ~= "table" then
-				continue
+		if isServer == "Server" then
+			for Key, Value in Module do
+				if typeof(Value) ~= "table" then
+					continue
+				end
+				if Value["_SIGNAL"] then
+					rawset(Module, Key, Remote.new(Name, Key, Value["_SIGNAL"]))
+				end
 			end
-			if Value["_SIGNAL"] then
-				Module[Key] = Remote.new(Name, Key, Value["_SIGNAL"])
+		elseif isServer == "Client" then
+			for Key, Value in Module do
+				local Events = Remote.GetRemotes()
+
+				for _, Folder in Events do
+					for _, Event in Folder:GetChildren() do
+						if not Module._events[Folder.Name] then
+							rawset(Module._events, Folder.Name, {})
+						end
+						rawset(Module._events[Folder.Name], Event.Name, Remote.new(Name, Event.Name, Event))
+					end
+				end
 			end
 		end
 	end
-	return true
+	return Modules
 end
 
 --[[
@@ -124,7 +140,6 @@ local function LoadClasses()
 			Classes[ModuleLoader.Name] = AttemptRequire(ModuleLoader)
 		end
 	end
-	Construct(Classes)
 	return Classes
 end
 
@@ -134,9 +149,7 @@ end
 	@desc Loads all the modules from Container of folders
 ]]
 local function LoadModules(Containers: { Folder })
-	if not CanLoad() then
-		return warn("Cannot load")
-	end
+	CanLoad()
 	local Modules = {}
 
 	for _, Container: Folder in Containers do
@@ -146,11 +159,10 @@ local function LoadModules(Containers: { Folder })
 			end
 
 			local Success = AttemptRequire(Module)
-			print(Success, `{Module.Name} Loaded`)
+			--print(Success, `{Module.Name} Loaded`)
 			Modules[Module.Name] = Success
 		end
 	end
-
 	return Modules
 end
 
@@ -169,6 +181,7 @@ function Shared.new()
 	self.Interop = {}
 	self._loaded = false
 	self._started = false
+	print(debug.traceback())
 
 	return self
 end
@@ -184,6 +197,7 @@ function Shared:LoadModules(Container: { Folder })
 			self.Interop[ModuleName] = Module
 		end
 	end
+	return true
 end
 
 --[[
@@ -195,6 +209,9 @@ function Shared:Init()
 	if self._loaded then
 		return warn("Already loaded")
 	end
+
+	Construct(self.Interop)
+
 	for _, Module in self.Interop do
 		rawset(Module, `_index`, self._index)
 		rawset(Module, `Interop`, self.Interop)
@@ -203,14 +220,20 @@ function Shared:Init()
 
 	for _, module in self._index do
 		if typeof(module) == "table" and typeof(module.Init) == "function" then
-			module:Init()
+			task.defer(function()
+				module:Init()
+			end)
 		end
 	end
+
 	for _, module in self.Interop do
 		if typeof(module) == "table" and typeof(module.Init) == "function" then
-			module:Init()
+			task.defer(function()
+				module:Init()
+			end)
 		end
 	end
+
 	self._loaded = true
 	return true
 end
