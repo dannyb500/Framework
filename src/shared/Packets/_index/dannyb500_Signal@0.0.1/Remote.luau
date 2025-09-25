@@ -6,7 +6,11 @@ local RunService = game:GetService("RunService")
 
 
 local IsServer = RunService:IsServer()
+<<<<<<< HEAD
 local Store = if not IsServer then script:WaitForChild("Remotes") else Instance.new("Folder")
+=======
+local Store = if IsServer then script:WaitForChild("Remotes") else Instance.new("Folder")
+>>>>>>> a4bf446fd9a7981118c014ba4f42c4a3b557a642
 Store.Name = "Remotes"
 Store.Parent = script
 
@@ -45,7 +49,12 @@ function Remote.new(MobuleName: string,Name: string, Type: string | RemoteEvent)
 		local Dir = MkDir(MobuleName)
 		self._event.Name = Name
 		self._event.Parent = Dir
+<<<<<<< HEAD
 		
+=======
+		print(self)
+		warn("HERE")
+>>>>>>> a4bf446fd9a7981118c014ba4f42c4a3b557a642
 		self._trove:Connect(self._event.OnServerEvent,function(...)
 			self._signal:Fire(...)
 		end)
