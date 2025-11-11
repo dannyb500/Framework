@@ -78,9 +78,11 @@ export type FrameworkPacket = {
 
 		Wire: {
 			DrawLine: (from: Vector3, to: Vector3) -> nil;
-			DrawText: (position: Vector3,any: string) -> nil;
+			DrawText: (position: Vector3,size: number,any: string) -> nil;
 
 			SetColor: (Color3: Color3 | string) -> nil;
+			SetTransparency: (Opacity: number) -> (nil);
+			FillBoxAnimation: (Position: Vector3,Size: number,LookAt: Model,StopSignal: Signal,Success: Signal) -> (nil);
 		}
 
 	},
