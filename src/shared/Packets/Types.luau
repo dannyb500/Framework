@@ -76,6 +76,13 @@ export type FrameworkPacket = {
             Format: (Text: string) -> string,
         };
 
+		Wire: {
+			DrawLine: (from: Vector3, to: Vector3) -> nil;
+			DrawText: (position: Vector3,any: string) -> nil;
+
+			SetColor: (Color3: Color3 | string) -> nil;
+		}
+
 	},
 }
 return nil;

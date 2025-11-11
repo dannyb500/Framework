@@ -64,11 +64,15 @@ function Remote.GetRemotes()
 	return Store:GetChildren()
 end
 
-function Remote:Fire(...: any)
+function Remote:Fire(Player: Player,...: any)
 	if IsServer then
-		self._event:FireAllClients(...)
+		if type(Player) == "userdata" then
+			self._event:FireClient(Player,...)
+		else
+			self._event:FireAllClients(Player,...)
+		end
 	else
-		self._event:FireServer(...)
+		self._event:FireServer(Player,...)
 	end
 end
 

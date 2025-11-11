@@ -20,6 +20,7 @@ self._loaded: boolean
 ```
 
 ## Classes: _index
+### [Wireframe](docs/Wireframe.md)
 ### [Instance](docs/Instance.md)
 ### [Buffers](docs/Buffer.md)
 ### [Signal](docs/Signal.md)

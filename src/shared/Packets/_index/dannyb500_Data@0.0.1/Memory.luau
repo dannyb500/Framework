@@ -11,17 +11,25 @@ Memory.__index = Memory
 ]]
 
 function Memory.new()
-	return setmetatable({},Memory)
+	return setmetatable({Cache = {}},Memory)
 end
 
 --[[ SETTERS ]]--
 
 --[[
-	@function SetVec3
+	@function Set
 	@description Adds Value to memory
 ]]
 function Memory:Set(Key,Value)
-	self[Key] = Value
+	self.Cache[Key] = Value
+end
+
+--[[
+	@function Insert
+	@description Inserts Value to memory with a number as index
+]]
+function Memory:Insert(Value)
+	table.insert(self.Cache,Value);
 end
 
 --[[
@@ -29,11 +37,11 @@ end
 	@description Adds Value to memory
 ]]
 function Memory:SetTable(TableName, Key, Value)
-	if not self[TableName] then
-		self[TableName] = {}
+	if not self.Cache[TableName] then
+		self.Cache[TableName] = {}
 	end
 	if Key ~= nil then
-		self[TableName][Key] = Value
+		self.Cache[TableName][Key] = Value
 	else
 		warn("Attempted to use nil as key in SetTable for " .. TableName)
 	end
@@ -44,7 +52,7 @@ end
 	@description Converts Value to a Buffer
 ]]
 function Memory:SetCFrame(Key,Value)
-	self[Key] = CFrame.serialize(Value)
+	self.Cache[Key] = CFrame.serialize(Value)
 end
 
 --[[
@@ -52,36 +60,43 @@ end
 	@description Converts Value to a Buffer
 ]]
 function Memory:SetVec3(Key,Value)
-	self[Key] = Vec3.serialize(Value)
+	self.Cache[Key] = Vec3.serialize(Value)
 end
 
 --[[ GETTERS ]]--
 
+--[[
+if Key is NULL it will return Cache
+]]
 function Memory:Get(Key)
-	return self[Key]
+	if self.Cache[Key] then
+		return self.Cache[Key]
+	else
+		return self.Cache
+	end
 end
 
 function Memory:GetCFrame(Key)
-	return CFrame.deserialize(self[Key])
+	return CFrame.deserialize(self.Cache[Key])
 end
 
 function Memory:GetVec3(Key)
-	return Vec3.deserialize(self[Key])
+	return Vec3.deserialize(self.Cache[Key])
 end
 
 
 --[[ DESTRUCTOR ]]--
 
 function Memory:Remove(Key)
-	self[Key] = nil
+	self.Cache[Key] = nil
 end
 
 function Memory:Clear()
-	table.clear(self)
+	table.clear(self.Cache)
 end
 
 function Memory:Destroy()
-	table.clear(self)
+	self:Clear()
 	setmetatable(self,nil)
 end
 

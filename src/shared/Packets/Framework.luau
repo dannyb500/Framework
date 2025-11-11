@@ -19,7 +19,10 @@ local RunService = game:GetService("RunService")
 -- VARIABLES --
 -------------------------
 local isServer = RunService:IsServer() and "Server" or "Client"
-local ignoreServer = false -- True: yeidls until server modules have loaded
+local ignoreServer = false -- false: yeidls until server modules have loaded
+local requireSubModules = true;
+local deferInit = true;
+local deferStart = true;
 
 local Index = script.Parent:WaitForChild("_index")
 
@@ -65,6 +68,9 @@ local function AttemptRequire(Module: ModuleScript)
 		error(`Failed to require {Module.Name} : {debug.traceback()}`)
 	end)
 	if Loaded then
+		if typeof(Loaded) == "function" then
+			return Loaded
+		end
 		return setmetatable(Loaded, {
 			__index = function(self, i)
 				if rawget(self, i) == nil then
@@ -73,10 +79,11 @@ local function AttemptRequire(Module: ModuleScript)
 					return rawget(self, i)
 				end
 			end,
-			__newindex = function(_, k, v)
+			__newindex = function(t, k, v)
 				if Loaded._READONLY then
 					error(`{Module.Name} IS READ-ONLY | KEY:{k} VALUE:{v}`, 3)
 				end
+				rawset(t, k, v)
 			end,
 			__metatable = "protected",
 		})
@@ -154,6 +161,18 @@ local function LoadModules(Containers: { Folder })
 
 	for _, Container: Folder in Containers do
 		for _, Module: Instance in Container:GetChildren() do
+
+			if Module:IsA("Folder") and requireSubModules then
+				local Success = LoadModules({Module})
+				if not Success then
+					continue
+				end
+
+				for i,v in Success do
+					Modules[i] = v;	
+				end
+			end
+
 			if not Module:IsA("ModuleScript") then
 				continue
 			end
@@ -181,7 +200,6 @@ function Shared.new()
 	self.Interop = {}
 	self._loaded = false
 	self._started = false
-	print(debug.traceback())
 
 	return self
 end
@@ -205,7 +223,6 @@ end
 	@desc Inits all modules that have an Init function
 ]]
 function Shared:Init()
-	print(self, "FRAMEWORK")
 	if self._loaded then
 		return warn("Already loaded")
 	end
@@ -220,17 +237,25 @@ function Shared:Init()
 
 	for _, module in self._index do
 		if typeof(module) == "table" and typeof(module.Init) == "function" then
-			task.defer(function()
+			if deferStart then
+				task.defer(function()
+					module:Init()
+				end)
+			else
 				module:Init()
-			end)
+			end
 		end
 	end
 
 	for _, module in self.Interop do
 		if typeof(module) == "table" and typeof(module.Init) == "function" then
-			task.defer(function()
+			if deferStart then
+				task.defer(function()
+					module:Init()
+				end)
+			else
 				module:Init()
-			end)
+			end
 		end
 	end
 
@@ -252,12 +277,24 @@ function Shared:Start()
 
 	for _, module in self._index do
 		if typeof(module) == "table" and typeof(module.Start) == "function" then
-			module:Start()
+			if deferStart then
+				task.defer(function()
+					module:Start()
+				end)
+			else
+				module:Start()
+			end
 		end
 	end
 	for _, module in self.Interop do
 		if typeof(module) == "table" and typeof(module.Start) == "function" then
-			module:Start()
+			if deferStart then
+				task.defer(function()
+					module:Start()
+				end)
+			else
+				module:Start()
+			end
 		end
 	end
 	self._started = true
