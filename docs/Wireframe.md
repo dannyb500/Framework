@@ -23,7 +23,12 @@ local StopSignal = self._index.Signal.new();
 	StopSignal gets fired if you call fire from an input
 	SuccessSignal fires when it reaches the end or StopSignal gets fired: returns True | False
 ]]
-Wires:FillBoxAnimation(Vector3.new(0,0,0),1,Vector3.new(0,5,0),StopSignal,SuccessSignal)
+Wires:FillBoxAnimation(Vector3.new(0,0,0),1,Vector3.new(0,5,0),StopSignal,function(Result: boolean)
+	if Result == false then
+		return
+	end
+
+end)
 
 SuccessSignal:Connect(function(B: boolean)
 	warn(B)
@@ -54,12 +59,16 @@ end)
 ```lua
 
 DrawLine: (from: Vector3, to: Vector3) -> nil;
+DrawPath: ({Vector3},Loop: boolean) -> nil;
+DrawAxis: (Position: Vector3) -> nil;
+DrawCircle: (Position: Vector3,Radius: number,Segments: number) -> nil;
+DrawSphere: (Position: Vector3,Radius: number,Segments: number,Normal: Vector3) -> nil;
+DrawCone: (position: Vector3, radius: number,height: number, segments: number, normal: Vector3)
 DrawText: (position: Vector3,size: number,any: string) -> nil;
 
 SetColor: (Color3: Color3 | string) -> nil;
-SetTransparency: (N: number)
-FillBoxAnimation: (Position: Vector3,Size: number,LookAt: Model | BasePart,StopSignal: Signal.new,Success: Signal.new)
-
+SetTransparency: (Opacity: number) -> (nil);
+FillBoxAnimation: (Position: Vector3,Size: number,LookAt: Model,Stop:Signal,Success:() -> (boolean) -> (nil);
 ```
 #
 #### [Back](../README.md)

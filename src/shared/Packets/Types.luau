@@ -78,11 +78,16 @@ export type FrameworkPacket = {
 
 		Wire: {
 			DrawLine: (from: Vector3, to: Vector3) -> nil;
+			DrawPath: ({Vector3},Loop: boolean) -> nil;
+			DrawAxis: (Position: Vector3) -> nil;
+			DrawCircle: (Position: Vector3,Radius: number,Segments: number) -> nil;
+			DrawSphere: (Position: Vector3,Radius: number,Segments: number,Normal: Vector3) -> nil;
+			DrawCone: (Position: Vector3, Radius: number,Height: number, Segments: number, Normal: Vector3) -> nil;
 			DrawText: (position: Vector3,size: number,any: string) -> nil;
 
 			SetColor: (Color3: Color3 | string) -> nil;
 			SetTransparency: (Opacity: number) -> (nil);
-			FillBoxAnimation: (Position: Vector3,Size: number,LookAt: Model,StopSignal: Signal,Success: Signal) -> (nil);
+			FillBoxAnimation: (Position: Vector3,Size: number,LookAt: Model,Stop:Signal,Success: () -> (boolean)) -> (nil);
 		}
 
 	},

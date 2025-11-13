@@ -27,9 +27,12 @@ local function DoorRender()
 	
 		if Dist <= Client.MAX_DIST then
 			ClosestDoor = Door;
+			-- Wires:DrawSphere(DoorPos,5,500,Vector3.new(0,1,0))
             Wires:DrawBoxOutline(DoorPos,BOX_SIZE,CharPos);
 			Wires:DrawLine(DoorPos,CharPos)
 			Wires:DrawText(DoorPos + Vector3.new(0,-1,0),20,"[E] TO OPEN DOOR")
+			Wires:DrawAxis(DoorPos)
+			Wires:DrawCone(DoorPos,1,5,20,Vector3.yAxis)
 		end
 	end
 end
