@@ -65,6 +65,8 @@ end
 
 
 function Ins:ApplyProperties(Object: {Connect: () -> ()},Properties: {Property: string},Parent)
+	print(Object,Properties,Parent)
+
 	assert(Object,"Object is nil")
 	assert(typeof(Properties) == "table","Properties is not a table")
 
@@ -92,7 +94,7 @@ function Ins:ApplyProperties(Object: {Connect: () -> ()},Properties: {Property: 
 			continue
 		end
 		for _,Child in Value do
-			Child.Parent = Parent or Object
+			Child.Parent = if Parent then Parent else Object
 			if typeof(Child) == "table" then
 				ParentTo(Child,Object)
 			end

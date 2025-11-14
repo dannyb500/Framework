@@ -27,19 +27,9 @@ local Server = {
 -------------------------
 
 function Server:Init()
-	print("Server Init")
-	print(self)
-	self.Test1:Connect(function(Player: Player, Msg: string)
-		print(`{Player.Name} | Signal: {Msg}`)
-	end)
-	while true do
-		task.wait(1)
-		self.Test1:Fire("info for client")
-	end
 end
 
 function Server:Start()
-	print("Server Start", self)
 end
 
 return Server

@@ -65,6 +65,7 @@ DrawCircle: (Position: Vector3,Radius: number,Segments: number) -> nil;
 DrawSphere: (Position: Vector3,Radius: number,Segments: number,Normal: Vector3) -> nil;
 DrawCone: (position: Vector3, radius: number,height: number, segments: number, normal: Vector3)
 DrawText: (position: Vector3,size: number,any: string) -> nil;
+DrawBox: (self: any,Position: Vector3, Size: number,LookAt: Vector3 | nil) -> nil;
 
 SetColor: (Color3: Color3 | string) -> nil;
 SetTransparency: (Opacity: number) -> (nil);

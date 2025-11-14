@@ -73,6 +73,9 @@ local function setColor(Color3: Color3 | string)
 			error(`String color not found {Color3}`, 3)
 		end
 	end
+	if not Color3 then
+		return;
+	end
 	WFH.Color3 = Color3
 	WFH_STATIC.Color3 = Color3
 	WFH_COLOR = Color3;
@@ -98,7 +101,7 @@ local function drawText(position: Vector3,size: number, ...)
 	WFH:AddText(position,formatText(Args),size);
 end
 
-local function drawBoxOutline(position: Vector3, size: number, lookAt: Vector3 | nil) 
+local function drawBox(position: Vector3, size: number, lookAt: Vector3 | nil) 
 	local halfSize = size / 2 
 
 	local pathArray = {
@@ -153,7 +156,7 @@ local function fillBoxAnimation(position: Vector3,Size: number, lookAt: Model | 
 			CurrentY = CurrentY + 0.05
 			task.wait(0.025)
 			WFH_STATIC:Clear()
-
+			table.clear(Draw)
 		until CurrentY > Size or C;
 		if Result then
 			if Result.Fire then
@@ -247,7 +250,7 @@ function WFH_MODULE:DrawLine(From: Vector3, To: Vector3)
 end
 
 function WFH_MODULE:DrawPath(Tbl: {Vector3},Loop: boolean)
-	WIRE_MEM:drawPath(function()
+	WIRE_MEM:Insert(function()
 		drawPath(Tbl,Loop)
 	end)
 end
@@ -260,9 +263,9 @@ function WFH_MODULE:DrawText(Position: Vector3,Size: number, ...: string)
 	end)
 end
 
-function WFH_MODULE:DrawBoxOutline(Position: Vector3, Size: number,LookAt: Vector3 | nil)
+function WFH_MODULE:DrawBox(Position: Vector3, Size: number,LookAt: Vector3 | nil)
 	WIRE_MEM:Insert(function()
-		drawBoxOutline(Position, Size,LookAt);
+		drawBox(Position, Size,LookAt);
 	end)
 end
 

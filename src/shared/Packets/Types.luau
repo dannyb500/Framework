@@ -57,7 +57,7 @@ export type FrameworkPacket = {
 		Signal: {
 			new: (
 			) -> {
-				new: (self: any) -> any,
+				new: () -> any,
 				Connect: (self: any, Func: (...any) -> ()) -> RBXScriptConnection,
 				Fire: (self: any, ...any) -> (),
 				Destroy: (self: any) -> nil,
@@ -77,14 +77,15 @@ export type FrameworkPacket = {
         };
 
 		Wire: {
-			DrawLine: (from: Vector3, to: Vector3) -> nil;
-			DrawPath: ({Vector3},Loop: boolean) -> nil;
-			DrawAxis: (Position: Vector3) -> nil;
-			DrawCircle: (Position: Vector3,Radius: number,Segments: number) -> nil;
-			DrawSphere: (Position: Vector3,Radius: number,Segments: number,Normal: Vector3) -> nil;
-			DrawCone: (Position: Vector3, Radius: number,Height: number, Segments: number, Normal: Vector3) -> nil;
-			DrawText: (position: Vector3,size: number,any: string) -> nil;
-
+			DrawLine: (self: any,from: Vector3, to: Vector3) -> nil;
+			DrawPath: (self: any,{Vector3},Loop: boolean) -> nil;
+			DrawAxis: (self: any,Position: Vector3) -> nil;
+			DrawCircle: (self: any,Position: Vector3,Radius: number,Segments: number) -> nil;
+			DrawSphere: (self: any,Position: Vector3,Radius: number,Segments: number,Normal: Vector3) -> nil;
+			DrawCone: (self: any,Position: Vector3, Radius: number,Height: number, Segments: number, Normal: Vector3) -> nil;
+			DrawText: (self: any,position: Vector3,size: number,any) -> nil;
+			DrawBox: (self: any,Position: Vector3, Size: number,LookAt: Vector3 | nil) -> nil;
+			
 			SetColor: (Color3: Color3 | string) -> nil;
 			SetTransparency: (Opacity: number) -> (nil);
 			FillBoxAnimation: (Position: Vector3,Size: number,LookAt: Model,Stop:Signal,Success: () -> (boolean)) -> (nil);

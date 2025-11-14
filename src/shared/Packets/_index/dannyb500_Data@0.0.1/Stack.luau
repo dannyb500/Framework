@@ -47,3 +47,5 @@ end
 function Stack:IsEmpty(): boolean
     return #self._stack == 0
 end
+
+return Stack;
