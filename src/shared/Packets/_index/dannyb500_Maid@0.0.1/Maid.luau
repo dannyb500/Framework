@@ -32,7 +32,7 @@ function T.new()
 	return self
 end
 
-function T:Connect(C: {Connect: () -> ()},Fnc:(any) -> ())
+function T:Connect(C: RBXScriptConnection,Fnc:(any) -> ())
 	local Connection = C:Connect(Fnc)
 	table.insert(self.Tasks,{C,"Disconnect"})
 	return Connection

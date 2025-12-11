@@ -233,6 +233,7 @@ function Shared:Init()
 		rawset(Module, `_index`, self._index)
 		rawset(Module, `Interop`, self.Interop)
 		rawset(Module, `_events`, Module._events or {})
+		rawset(Module, `_Root`, script.Parent)
 	end
 
 	for _, module in self._index do

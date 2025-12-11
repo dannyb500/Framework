@@ -76,10 +76,10 @@ function Remote:Fire(Player: Player,...: any)
 	end
 end
 
-function Remote:FireOther(Player: Player,...: any)
+function Remote:FireOther(PlayerCalling: Player,...: any)
 	if IsServer then
 		for _,Player in game.Players:GetPlayers() do
-			if Player ~= Player then
+			if Player ~= PlayerCalling then
 				self._event:FireClient(Player,...)
 			end
 		end

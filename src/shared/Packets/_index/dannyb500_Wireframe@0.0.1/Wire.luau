@@ -139,7 +139,7 @@ local function fillBoxAnimation(position: Vector3,Size: number, lookAt: Model | 
 			for y = -Size, CurrentY, 0.01 do
 				local Look = if typeof(lookAt) == "Model" then lookAt:GetPivot().Position else lookAt
 				local transform = if lookAt then CFrame.lookAt(position, Look) else CFrame.new(position)
-				
+
 				table.insert(Draw,{
 					Vector3.new(-halfSize, y/2, 0),
 					Vector3.new(halfSize, y/2, 0)
@@ -174,9 +174,9 @@ local function drawCircle(position: Vector3, radius: number, segments: number,no
 	normal = normal or Vector3.yAxis;
 
 	local CF = CFrame.lookAlong(position,normal)
-	
+
 	local path = {}
-	
+
 	for i = 0, segments do
 		local a = i * (PI_2 / segments)
 		table.insert(
@@ -225,6 +225,19 @@ local function drawCone(position: Vector3, radius: number,height: number, segmen
 		draw(p,top)
 	end
 end
+
+local function drawRay(origin: Vector3, direction: Vector3, raycast: RaycastResult)
+	local c = WFH_COLOR;
+	if raycast then
+		setColor("g");
+		draw(origin,raycast.Position);
+	else
+		setColor("r");
+		draw(origin, origin + direction);
+	end
+	setColor(c)
+end
+
 --------------------------------------
 
 --------------------------------------
@@ -299,6 +312,11 @@ function WFH_MODULE:DrawCone(Position: Vector3, Radius: number,Height: number,Se
 	end)
 end
 
+function WFH_MODULE:DrawRay(Origin: Vector3,Direction: Vector3, Raycast: RaycastResult)
+	WIRE_MEM:Insert(function()
+		drawRay(Origin,Direction,Raycast)
+	end)
+end
 
 --------------------------------------
 --// INTERNAL \\----------------------

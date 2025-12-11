@@ -27,6 +27,14 @@ local function Create3dPart(Size:Vector3)
 	return Part
 end
 
+local function HasProperty(Instance: BasePart,Property: string,Value: any)
+	local success,error = pcall(function()
+		return Instance[Property]
+	end)
+	return success;
+end
+
+
 --[[
 Updates 3d object position to fit camera
 ]]
@@ -65,8 +73,6 @@ end
 
 
 function Ins:ApplyProperties(Object: {Connect: () -> ()},Properties: {Property: string},Parent)
-	print(Object,Properties,Parent)
-
 	assert(Object,"Object is nil")
 	assert(typeof(Properties) == "table","Properties is not a table")
 
@@ -78,7 +84,9 @@ function Ins:ApplyProperties(Object: {Connect: () -> ()},Properties: {Property: 
 				end)
 				continue
 			end
-			Object[Property] = Value
+			if HasProperty(Object,Property) then
+				Object[Property] = Value
+			end
 			continue	
 		end
 		if Property == "BindEvent" then
