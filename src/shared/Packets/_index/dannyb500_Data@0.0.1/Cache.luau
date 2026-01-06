@@ -4,44 +4,52 @@ local MAX_SIZE = 50;
 
 -- Creates a new Object Pool
 function CACHE.new(Size: number | nil, Object: Instance)
-    local self = setmetatable({}, {__index = CACHE});
-    self._maxSize = Size or 50;
-    self.Pool = {};
+	local self = setmetatable({}, {__index = CACHE});
+	self._maxSize = Size or 50;
+	self.Pool = {};
 
-    for i = 1, self._maxSize do
-        local NewObject = Object:Clone();
-        NewObject.Parent = nil;
-        table.insert(self.Pool, NewObject);
-    end
+	for i = 1, self._maxSize do
+		local NewObject = Object:Clone();
+		NewObject.Parent = nil;
+		table.insert(self.Pool, NewObject);
+	end
 
-    return self
+	return self
 end
 
 -- Destroys the Cache
 function CACHE:Destroy()
-    for k in pairs(self.Pool) do
-        k:Destroy();
-    end
-    self.Pool = nil;
-    setmetatable(self, nil)
+	for k in pairs(self.Pool) do
+		k:Destroy();
+	end
+	self.Pool = nil;
+	setmetatable(self, nil)
 end
 
 --// SETTERS
 
-
 function CACHE:ReturnToPool(Items: {any})
-    for _,v in self.Pool do
+	for _,v in Items do
 		v.Parent = nil;
+	end
+end
+
+function CACHE:AddToPool(N: number)
+	for i = 1, N do
+		local NewObject = self._object:Clone();
+		self._maxSize += 1;
+		NewObject.Parent = nil;
+		table.insert(self.Pool, NewObject);
 	end
 end
 
 --// GETTERS
 
 function CACHE:GetPool(N: number)
-    assert(N and type(N) == "number","Invalid size given")
-    local Pool = {}
+	assert(N and type(N) == "number","Invalid size given")
+	local Pool = {}
 	local Count = 0;
-	
+
 	for _,v in self.Pool do
 		if v.Parent ~= nil then
 			continue

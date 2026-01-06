@@ -136,8 +136,8 @@ export type BufferString = {
 }
 export type Serialize = {
 	CFrame: BufferNumber;
-	Vector3: BufferNumber;
-	Vector2: BufferNumber;
+	Vec3: BufferNumber;
+	Vec2: BufferNumber;
 	String: BufferString;
 }
 --// SIGNAL //--
@@ -152,6 +152,7 @@ export type Remote = {
 	GetRemotes: () -> {Instance};
 
 	Fire: (self: Remote, Player: Player, ...any) -> ();
+	FireAll: (self: Remote, ...any) -> ();
 	FireOther: (self: Remote, Player: Player, ...any) -> ();
 	FireClient: (self: Remote, Player: Player, ...any) -> ();
 	Connect: (self: Remote, Fnc: (...any) -> (any)) -> ();
@@ -185,18 +186,18 @@ export type UI = {
 }
 --// WIREFRAME //--
 export type Wireframe = {
-	SetColor: (Color3: Color3 | string) -> ();
-	SetTransparency: (n: number) -> ();
-	DrawLine: (from: Vector3, to: Vector3) -> ();
-	DrawPath: (points: {Vector3}, loop: boolean) -> ();
-	DrawText: (position: Vector3, size: number,string) -> ();
-	DrawBox: (position: Vector3, size: number, lookAt: Vector3 | nil) -> ();
-	DrawSphere: (position: Vector3, radius: number, lookAt: Vector3 | nil) -> ();
-	FillBoxAnimation: (position: Vector3, Size: number, lookAt: Model | BasePart, Cancel: Signal | nil, Result: (Model: Model) -> ()) -> ();
-	DrawCircle: (position: Vector3, radius: number, segments: number, normal: Vector3) -> ();
-	DrawAxis: (position: Vector3, size: number) -> ();
-	DrawCone: (position: Vector3, radius: number, height: number, segments: number, normal: Vector3 | nil) -> ();
-	DrawRay: (origin: Vector3, direction: Vector3, Raycast: RaycastResult) -> ();
+	SetColor: (self: Wireframe, Color3: Color3 | string) -> ();
+	SetTransparency: (self: Wireframe, n: number) -> ();
+	DrawLine: (self: Wireframe, from: Vector3, to: Vector3) -> ();
+	DrawPath: (self: Wireframe, points: {Vector3}, loop: boolean) -> ();
+	DrawText: (self: Wireframe, position: Vector3, size: number,string) -> ();
+	DrawBox: (self: Wireframe, position: Vector3, size: number, lookAt: Vector3 | nil) -> ();
+	DrawSphere: (self: Wireframe, position: Vector3, radius: number, lookAt: Vector3 | nil) -> ();
+	FillBoxAnimation: (self: Wireframe, position: Vector3, Size: number, lookAt: Model | BasePart, Cancel: Signal | nil, Result: (Model: Model) -> ()) -> ();
+	DrawCircle: (self: Wireframe, position: Vector3, radius: number, segments: number, normal: Vector3) -> ();
+	DrawAxis: (self: Wireframe, position: Vector3, size: number) -> ();
+	DrawCone: (self: Wireframe, position: Vector3, radius: number, height: number, segments: number, normal: Vector3 | nil) -> ();
+	DrawRay: (self: Wireframe, origin: Vector3, direction: Vector3, Raycast: RaycastResult) -> ();
 }
 --// WORLD //--
 export type Water = {

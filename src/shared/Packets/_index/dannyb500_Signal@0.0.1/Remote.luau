@@ -66,25 +66,31 @@ end
 
 function Remote:Fire(Player: Player,...: any)
 	if IsServer then
-		if type(Player) == "userdata" then
-			self._event:FireClient(Player,...)
-		else
-			self._event:FireAllClients(Player,...)
-		end
+		self._event:FireClient(Player,...)
 	else
 		self._event:FireServer(Player,...)
 	end
 end
 
-function Remote:FireOther(PlayerCalling: Player,...: any)
+function Remote:FireAll(...: any)
 	if IsServer then
-		for _,Player in game.Players:GetPlayers() do
-			if Player ~= PlayerCalling then
-				self._event:FireClient(Player,...)
-			end
-		end
+		self._event:FireAllClients(...)
+	else
+		error("Cannot fire all clients from server")		
+	end
+end
+
+function Remote:FireOther(PlayerCalling: Player,...: any)
+	if not IsServer then
+		return error("Cannot fire other clients from server")
 	end
 	
+	for _,Player in game.Players:GetPlayers() do
+		if Player == PlayerCalling then
+			continue
+		end
+		self._event:FireClient(Player,...)
+	end
 end
 
 function Remote:FireClient(Player: Player,...: any)
