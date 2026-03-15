@@ -7,6 +7,9 @@ local Client = {
 	Test = "e",
 } :: Types.FrameworkPacket
 
+export type self = typeof(Client) & Types.FrameworkIndex;
+
+
 -------------------------
 -- SERVICES --
 -------------------------
@@ -27,7 +30,7 @@ local Client = {
 -- FRAMEWORK INIT --
 -------------------------
 
-function Client:Init()
+function Client.Init(self: self)
 
 	local Compiler = self._index.CSS
 	local css_input = [[
@@ -82,7 +85,7 @@ function Client:Init()
 
 end
 
-function Client:Start()
+function Client.Start(self: self)
 
 end
 

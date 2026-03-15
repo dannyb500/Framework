@@ -25,11 +25,11 @@ local Client = {
 -- FRAMEWORK INIT --
 -------------------------
 
-function Client:Init()
+function Client.Init(self: self)
 
 end
 
-function Client:Start()
+function Client.Start(self: self)
 	-- self.thing = "e" -- will prevent due to read-only
 end
 

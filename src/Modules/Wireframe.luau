@@ -7,6 +7,9 @@ local Client = {
 	Test = "e",
 } :: Types.FrameworkPacket
 
+export type self = typeof(Client) & Types.FrameworkIndex;
+
+
 -------------------------
 -- SERVICES --
 -------------------------
@@ -105,7 +108,7 @@ end
 -- FRAMEWORK INIT --
 -------------------------
 
-function Client:Init()
+function Client.Init(self: self)
     Wire = self._index.Wire
 
     -- RunService:BindToRenderStep("Example_WIREFRAME",Enum.RenderPriority.Camera.Name + 1,RenderExample)
@@ -115,7 +118,7 @@ function Client:Init()
     end
 end
 
-function Client:Start()
+function Client.Start(self: self)
 
 end
 

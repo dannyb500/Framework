@@ -4,7 +4,8 @@ local Signal = require(ReplicatedStorage.Shared.Packets.Signal)
 local Server = {
 	Test = "e",
 	Test1 = Signal.new(false),
-}
+} :: Types.FrameworkPacket
+export type self = typeof(Server) & Types.FrameworkIndex;
 
 -------------------------
 -- SERVICES --
@@ -26,10 +27,10 @@ local Server = {
 -- FRAMEWORK INIT --
 -------------------------
 
-function Server:Init()
+function Server.Init(self: self)
 end
 
-function Server:Start()
+function Server.Start(self: self)
 end
 
 return Server
