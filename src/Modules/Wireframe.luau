@@ -5,7 +5,7 @@ local Types = require(ReplicatedStorage.Shared.Packets:WaitForChild("Types"))
 
 local Client = {
 	Test = "e",
-} :: Types.FrameworkPacket
+}
 
 export type self = typeof(Client) & Types.FrameworkIndex;
 

@@ -3,12 +3,8 @@ local RunService = game:GetService("RunService")
 
 local Types = require(ReplicatedStorage.Shared.Packets:WaitForChild("Types"))
 
-local Client = {
-	Test = "e",
-} :: Types.FrameworkPacket
-
+local Client = {}
 export type self = typeof(Client) & Types.FrameworkIndex;
-
 
 -------------------------
 -- SERVICES --
@@ -36,28 +32,29 @@ function Client.Init(self: self)
 	local css_input = [[
         .container {
             background-color: white;
-            border-radius: 10%;
+            border-radius: 10px;
             opacity: 60%;
         }
         .header {
             background-color: white;
-            border-radius: 100%;
+            border-radius: 50px;
             opacity: 60%;
 
            //padding: 100%;
-        }◙
+        }
     ]]
 
 
-	local compiled = Compiler:Compile(css_input);
-	Compiler:ApplyStyle(compiled)
-	print(compiled)
+	local CSS = Compiler.new("Test")
+	CSS:Compile(css_input);
+	CSS:ApplyStyle()
+
 	local UI = self._index.UI.new();
-	UI:LoadStyleSheet("CoreSheet")
+	UI:LoadStyleSheet("Test")
 	UI:CreateElement("Frame", {
 		Size = UDim2.new(0.2,0,0.2,0);
 		Tag = "container";
-	}, 
+	},
 	{
 		UI:CreateElement("ImageLabel",{},{});
 

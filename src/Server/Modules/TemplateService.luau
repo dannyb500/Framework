@@ -1,21 +1,21 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Signal = require(ReplicatedStorage.Shared.Packets.Signal)
+local Types = require(ReplicatedStorage.Shared.Packets.Types);
 
 local Server = {
-	Test = "e",
 	Test1 = Signal.new(false),
-} :: Types.FrameworkPacket
+}
 export type self = typeof(Server) & Types.FrameworkIndex;
 
 -------------------------
--- SERVICES --
+-- SERVICES --¬
 -------------------------
 
 -------------------------
 -- VARIABLES --
 -------------------------
 
--------------------------
+-------------------------¬
 -- PRIVATE FUNCTIONS --
 -------------------------
 

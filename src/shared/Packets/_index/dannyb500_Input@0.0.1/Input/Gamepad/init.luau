@@ -5,7 +5,7 @@ local Signal = require("../../dannyb500_Signal@0.0.1/Signal")
 local Trove = require("../../../OpenSource/Trove")
 
 local Gamepad = {}
-Gamepad.__Index = Gamepad
+Gamepad.__index = Gamepad
 
 local GuiService = game:GetService("GuiService")
 
@@ -18,7 +18,7 @@ local function GetGamepad()
 end
 
 function Gamepad.new()
-	local self = setmetatable(Gamepad,{})
+	local self = setmetatable({}, Gamepad)
 	self.GAMEPAD = GetGamepad()
 	self.ButtonUp = Signal.new()
 	self.ButtonDown = Signal.new()
