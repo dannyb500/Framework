@@ -8,4 +8,9 @@ function Signal.new(is_unreliable: boolean)
 	}
 end 
 
+function Signal.newFunction()
+	return {
+		_SIGNAL = "FUNCTION"
+	}
+end 
 return Signal

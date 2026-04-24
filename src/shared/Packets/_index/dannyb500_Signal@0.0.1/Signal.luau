@@ -10,24 +10,23 @@ Signal.__index = Signal
 ]]
 function Signal.new()
 	local self = setmetatable({}, Signal)
-	self.Callback = {} :: {(...any) -> ()}
+	self.Callback = {} :: { (...any) -> () }
 	self.Disconnect = function()
-		for i,_ in self.Callback do
-			table.remove(self.Callback,i)
+		for i, _ in self.Callback do
+			table.remove(self.Callback, i)
 		end
 	end
 	self.DisconnectOne = function(Callback: () -> ())
-		for i,fnc in self.Callback do
+		for i, fnc in self.Callback do
 			if fnc ~= Callback then
 				continue
 			end
-			table.remove(self.Callback,i)
+			table.remove(self.Callback, i)
 			break
 		end
 	end
 	return self
 end
-
 
 --[[
 	@public
@@ -40,9 +39,8 @@ end
 	
 ]]
 function Signal:Connect(Callback: () -> ())
-	table.insert(self.Callback,Callback)
+	table.insert(self.Callback, Callback)
 end
-
 
 --[[
 	@public
@@ -51,9 +49,22 @@ end
 	Fires all functions
 ]]
 function Signal:Fire(...: (any) -> ())
-	for _,fnc in self.Callback do
+	for _, fnc in self.Callback do
 		fnc(...)
 	end
+end
+
+--[[
+	@public
+	@function FireInvoke()
+	
+	returns the first callback
+]]
+function Signal:FireInvoke(...: (any) -> ())
+	assert(self.Callback[1], "No function connected to signal")
+	assert(typeof(self.Callback[1]) == "function", "First callback is not a function")
+		
+	return self.Callback[1](...)
 end
 
 --[[
@@ -76,11 +87,7 @@ end
 ]]
 function Signal:Destroy()
 	self.Disconnect()
-	setmetatable(self,nil)
+	setmetatable(self, nil)
 end
-
-
-
-
 
 return Signal

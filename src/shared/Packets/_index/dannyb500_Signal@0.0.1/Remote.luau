@@ -1,15 +1,12 @@
-
 local Trove = require("../../OpenSource/Trove")
 local Signal = require("./Signal")
 
 local RunService = game:GetService("RunService")
 
-
 local IsServer = RunService:IsServer()
 local Store = if not IsServer then script:WaitForChild("Remotes") else Instance.new("Folder")
 Store.Name = "Remotes"
 Store.Parent = script
-
 
 local Remote = {}
 Remote.__index = Remote
@@ -29,34 +26,47 @@ end
 	@returns Remote
 	Creates a new Remote instance to manage Roblox RemoteEvents and UnreliableRemoteEvents
 ]]
-function Remote.new(MobuleName: string,Name: string, Type: string | RemoteEvent)
+function Remote.new(MobuleName: string, Name: string, Type: string | RemoteEvent)
 	local self = setmetatable({}, Remote)
-	
+
 	self._trove = Trove.new()
 	self._signal = Signal.new()
 	self._name = Name
 	self._type = Type
-	self._event = nil;
-	
+	self._event = nil
+
 	if IsServer then
-		self._event = if Type == "UNRELIABLE" then
-			Instance.new("UnreliableRemoteEvent") else
-			Instance.new("RemoteEvent") 
+		self._event = if Type == "UNRELIABLE"
+			then Instance.new("UnreliableRemoteEvent")
+			elseif Type == "FUNCTION" then Instance.new("RemoteFunction")
+			else Instance.new("RemoteEvent")
 		local Dir = MkDir(MobuleName)
 		self._event.Name = Name
 		self._event.Parent = Dir
-		
-		self._trove:Connect(self._event.OnServerEvent,function(...)
-			self._signal:Fire(...)
-		end)
+
+		if Type == "FUNCTION" then
+			self._event.OnServerInvoke = function(...)
+				return self._signal:Fire(...)
+			end
+		else
+			self._trove:Connect(self._event.OnServerEvent, function(...)
+				self._signal:Fire(...)
+			end)
+		end
 	else
 		self._event = Type
-		
-		self._trove:Connect(self._event.OnClientEvent,function(...)
-			self._signal:Fire(...)
-		end)
+
+		if Type:IsA("RemoteFunction") then
+			self._event.OnClientInvoke = function(...)
+				return self._signal:Fire(...)
+			end
+		else
+			self._trove:Connect(self._event.OnClientEvent, function(...)
+				self._signal:Fire(...)
+			end)
+		end
 	end
-	
+
 	return self
 end
 
@@ -64,11 +74,19 @@ function Remote.GetRemotes()
 	return Store:GetChildren()
 end
 
-function Remote:Fire(Player: Player,...: any)
+function Remote:Fire(Player: Player, ...: any)
 	if IsServer then
-		self._event:FireClient(Player,...)
+		self._event:FireClient(Player, ...)
 	else
-		self._event:FireServer(Player,...)
+		self._event:FireServer(Player, ...)
+	end
+end
+
+function Remote:Invoke(Player: Player | any, ...: any)
+	if IsServer then
+		return self._event:InvokeClient(Player, ...)
+	else
+		return self._event:InvokeServer(Player, ...)
 	end
 end
 
@@ -76,32 +94,32 @@ function Remote:FireAll(...: any)
 	if IsServer then
 		self._event:FireAllClients(...)
 	else
-		error("Cannot fire all clients from server")		
+		error("Cannot fire all clients from server")
 	end
 end
 
-function Remote:FireOther(PlayerCalling: Player,...: any)
+function Remote:FireOther(PlayerCalling: Player, ...: any)
 	if not IsServer then
 		return error("Cannot fire other clients from server")
 	end
-	
-	for _,Player in game.Players:GetPlayers() do
+
+	for _, Player in game.Players:GetPlayers() do
 		if Player == PlayerCalling then
 			continue
 		end
-		self._event:FireClient(Player,...)
+		self._event:FireClient(Player, ...)
 	end
 end
 
-function Remote:FireClient(Player: Player,...: any)
+function Remote:FireClient(Player: Player, ...: any)
 	if IsServer then
-		self._event:FireClient(Player,...)
+		self._event:FireClient(Player, ...)
 	else
-		error("Cannot fire client from server")		
+		error("Cannot fire client from server")
 	end
 end
 
-function Remote:Connect(callback: () -> (any))
+function Remote:Connect(callback: () -> any)
 	return self._signal:Connect(callback)
 end
 
@@ -111,8 +129,7 @@ end
 
 function Remote:Destroy()
 	self._trove:Destroy()
-	setmetatable(self,nil)
+	setmetatable(self, nil)
 end
-
 
 return Remote
