@@ -104,31 +104,33 @@ local function Construct(Modules)
 		rawset(Module, `Interop`, {})
 		rawset(Module, `_events`, {})
 		rawset(Module, `_index`, {})
+	end
 
-		if isServer == "Server" then
+	if isServer == "Server" then
+		for Name, Module in Modules do
 			for Key, Value in Module do
-				if typeof(Value) ~= "table" then
-					continue
-				end
-				if Value["_SIGNAL"] then
+				if typeof(Value) == "table" and Value["_SIGNAL"] then
 					rawset(Module, Key, Remote.new(Name, Key, Value["_SIGNAL"]))
 				end
 			end
-		elseif isServer == "Client" then
-			for Key, Value in Module do
-				local Events = Remote.GetRemotes()
+		end
+	elseif isServer == "Client" then
+		local Events = Remote.GetRemotes()
 
-				for _, Folder in Events do
-					for _, Event in Folder:GetChildren() do
-						if not Module._events[Folder.Name] then
-							rawset(Module._events, Folder.Name, {})
-						end
-						rawset(Module._events[Folder.Name], Event.Name, Remote.new(Name, Event.Name, Event))
+		for _, Folder in Events do
+			for _, Event in Folder:GetChildren() do
+				local remoteObj = Remote.new(Folder.Name, Event.Name, Event)
+
+				for _, Module in Modules do
+					if not Module._events[Folder.Name] then
+						rawset(Module._events, Folder.Name, {})
 					end
+					rawset(Module._events[Folder.Name], Event.Name, remoteObj)
 				end
 			end
 		end
 	end
+
 	return Modules
 end
 
