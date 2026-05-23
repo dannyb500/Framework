@@ -2,8 +2,8 @@ local T = {}
 T.__index = T
 
 local Destructors = {
-	["function"] = newproxy();
-	["thread"] = newproxy();
+	["function"] = "function";
+	["thread"] = "thread";
 	
 	["Instance"] = "Destroy";
 	["RBXScriptConnection"] = "Disconnect";

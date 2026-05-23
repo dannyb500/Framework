@@ -1,5 +1,5 @@
 local UserInputService = game:GetService("UserInputService")
-local Signal = require("../../dannyb500_Signal@0.0.1/Signal")
+local Signal = require("../../dannyb500_Signal/Signal")
 
 local Mobile = {}
 Mobile.__index = Mobile

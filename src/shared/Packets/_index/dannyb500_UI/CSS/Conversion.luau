@@ -19,7 +19,8 @@ local StyleMap = {
 
     --// SPACING, LAYOUT, & DIMENSIONS
     ["padding"] = "UIPadding", 
-    ["margin"] = "Padding", 
+	["margin"] = "Padding", 
+	["list"] = "UIListLayout";
     ["display"] = "LayoutObject", 
     
     -- Width/Height

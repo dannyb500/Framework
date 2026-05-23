@@ -69,9 +69,23 @@ function CSS:Compile(Code: string)
 		if string.find(line, Type.ELLIPSIS) then
 			local selectorName = string.match(line, "%" .. Type.ELLIPSIS .. "([%w_]+)")
 			if selectorName then
-				RBX_VER[selectorName] = {}
+				if not RBX_VER[selectorName] then
+					RBX_VER[selectorName] = {}
+				end
+
 				POINTER = RBX_VER[selectorName]
 				inBlock = string.find(line, Type.LEFT_BRACE, 1, true) ~= nil
+				
+				--// Pseudo-classes
+				if string.find(line, Type.COLON) then
+					local event = string.match(line, "%" .. Type.COLON .. "([%w_]+)")
+					local fullKey = `{selectorName}:{event}`
+
+					if not RBX_VER[fullKey] then
+						RBX_VER[fullKey] = {}
+					end
+					POINTER = RBX_VER[fullKey]
+				end
 			end
 		end
 
@@ -87,12 +101,15 @@ function CSS:Compile(Code: string)
 		end
 
 		local declaration = string.gsub(line, Type.NEW_LINE .. "$", "")
-
 		local property, value = string.match(declaration, "([^" .. Type.COLON .. "]+)" .. Type.COLON .. "(.*)")
+		
 		if property and value then
+			if string.find(value, Type.LEFT_BRACE) then
+				continue
+			end
 			property = string.match(property, "^%s*(.-)%s*$")
 			value = string.match(value, "^%s*(.-)%s*$")
-
+			
 			--// Values
 			if string.find(value, Type.COLOR) then
 				value = Color3.fromHex(value)
@@ -104,9 +121,10 @@ function CSS:Compile(Code: string)
 			elseif string.find(value, Type.PIXEL) then
 				value = tonumber(string.sub(value, 0, string.len(value) - 2))
 			elseif string.find(value, Type.PERCENT) then
-				value = tonumber(string.sub(value, 0, string.len(value) - 2)) / 10
+				value = tonumber(string.sub(value, 0, string.len(value) - 1)) / 100
 			end
-
+			
+			
 			if tonumber(value) then
 				value = tonumber(value)
 			end
@@ -119,24 +137,50 @@ function CSS:Compile(Code: string)
 					property = Style[property]
 				end
 			end
-
+			
 			if property == "UICorner" then
-				warn("test")
 				local style = Instance.new("StyleRule")
 				style.Name = "::UICorner"
 				style.Selector = "::UICorner"
 
-				--// if value is below 1 it sets to scale value else its offset value
 				style:SetProperties({
 					CornerRadius = UDim.new(if value <= 1 then value else 0, if value > 1 then value else 0),
 				})
 				value = style
+			elseif property == "UIPadding" then
+				local style = Instance.new("StyleRule")
+				style.Name = "::UIPadding"
+				style.Selector = "::UIPadding"
+				
+				local Scale = if value <= 1 then value else 0
+				local Offset = if value > 1 then value else 0
+				
+				style:SetProperties({
+					PaddingBottom = UDim.new(Scale, Offset);
+					PaddingLeft   = UDim.new(Scale, Offset);
+					PaddingRight  = UDim.new(Scale, Offset);
+					PaddingTop    = UDim.new(Scale, Offset);
+				})
+				value = style
+			elseif property == "UIListLayout" then
+				local style = Instance.new("StyleRule")
+				style.Name = "::UIListLayout"
+				style.Selector = "::UIListLayout"
+				
+				local Scale = if value <= 1 then value else 0
+				local Offset = if value > 1 then value else 0
+				
+				style:SetProperties({
+					Padding = UDim.new(Scale, Offset);
+				})
+				
+				value = style
 			end
-
 			POINTER[property] = value
 		end
 	end
 	self.Compiled = RBX_VER
+	print(self.Compiled)
 	return
 end
 
@@ -148,14 +192,28 @@ function CSS:ApplyStyle()
 		rule.Parent = self.StyleSheet;
 
 		local Apply = {}
-		for j, k in v do
-			if typeof(k) ~= "Instance" then
-				Apply[j] = k
-				continue
+		
+		task.spawn(function()
+			--// Event
+			if string.find(i, Type.COLON) then
+				local split = string.split(i, Type.COLON)
+				local event = string.gsub(split[2], " ", "")
+
+				rule.Selector = `:{event}`
+				rule.Name = `:{event}`
+				rule.Parent = self.StyleSheet:WaitForChild(split[1])
 			end
-			k.Parent = rule
-		end
-		rule:SetProperties(Apply)
+			
+			--// Applies Properties
+			for j, k in v do
+				if typeof(k) ~= "Instance" then
+					Apply[j] = k
+					continue
+				end
+				k.Parent = rule
+			end
+			rule:SetProperties(Apply)
+		end)
 	end
 end
 

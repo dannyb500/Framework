@@ -1,5 +1,5 @@
 --!strict
-local Serialize = require("../dannyb500_Serialize@0.0.1/Serialize")
+local Serialize = require("../dannyb500_Serialize/Serialize")
 local CFrame = Serialize.CFrame
 local Vec3 = Serialize.Vec3
 

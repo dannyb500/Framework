@@ -6,9 +6,8 @@ local SIN = math.sin;
 local PI = math.pi;
 local PI_2 = 2 * PI;
 
-local Memory = require(script.Parent.Parent["dannyb500_Data@0.0.1"].Memory)
-local Assert = require(script.Parent.Parent["dannyb500_Data@0.0.1"].Assert)
-local Colors = require(script.Parent.Parent["dannyb500_Str@0.0.1"].Colors)
+local Memory = require(script.Parent.Parent["dannyb500_Data"].Memory)
+local Colors = require(script.Parent.Parent["dannyb500_Str"].Colors)
 
 local WFH_NAME = "WireframeHandle";
 local WFH_PARENT = Terrain;
@@ -82,7 +81,7 @@ local function setColor(Color3: Color3 | string)
 end
 
 local function setTransparency(n: number)
-	Assert(WFH,"WFH not found");
+	assert(WFH,"WFH not found");
 	WFH.Transparency = n;
 end
 
@@ -121,7 +120,7 @@ local function drawBox(position: Vector3, size: number, lookAt: Vector3 | nil)
 end
 
 local function fillBoxAnimation(position: Vector3,Size: number, lookAt: Model | BasePart,Cancel,Result ) 
-	Assert(WFH,"WFH not found");
+	assert(WFH,"WFH not found");
 	local CurrentY = -Size
 	local C = false;
 
@@ -271,7 +270,7 @@ end
 function WFH_MODULE:DrawText(Position: Vector3,Size: number, ...: string)
 	local Args = {...}
 	WIRE_MEM:Insert(function()
-		Assert(Position,"No position given")
+		assert(Position,"No position given")
 		drawText(Position,Size, unpack(Args));
 	end)
 end

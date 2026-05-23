@@ -1,7 +1,7 @@
 local UserInputService = game:GetService("UserInputService")
 local HapticService = game:GetService("HapticService")
 
-local Signal = require("../../dannyb500_Signal@0.0.1/Signal")
+local Signal = require("../../dannyb500_Signal/Signal")
 local Trove = require("../../../OpenSource/Trove")
 
 local Gamepad = {}

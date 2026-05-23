@@ -46,7 +46,7 @@ function Remote.new(MobuleName: string, Name: string, Type: string | RemoteEvent
 
 		if Type == "FUNCTION" then
 			self._event.OnServerInvoke = function(...)
-				return self._signal:Fire(...)
+				return self._signal:FireInvoke(...)
 			end
 		else
 			self._trove:Connect(self._event.OnServerEvent, function(...)
@@ -55,10 +55,10 @@ function Remote.new(MobuleName: string, Name: string, Type: string | RemoteEvent
 		end
 	else
 		self._event = Type
-
+		
 		if Type:IsA("RemoteFunction") then
 			self._event.OnClientInvoke = function(...)
-				return self._signal:Fire(...)
+				return self._signal:FireInvoke(...)
 			end
 		else
 			self._trove:Connect(self._event.OnClientEvent, function(...)

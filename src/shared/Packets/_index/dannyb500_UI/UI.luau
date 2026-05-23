@@ -1,8 +1,5 @@
-local Assert = require(script.Parent.Parent["dannyb500_Data@0.0.1"].Assert)
-local Memory = require(script.Parent.Parent["dannyb500_Data@0.0.1"].Memory)
-local Stack = require(script.Parent.Parent["dannyb500_Data@0.0.1"].Stack)
-local Signal = require(script.Parent.Parent["dannyb500_Signal@0.0.1"].Signal)
-local Maid = require(script.Parent.Parent["dannyb500_Maid@0.0.1"].Maid)
+local Signal = require(script.Parent.Parent["dannyb500_Signal"].Signal)
+local Maid = require(script.Parent.Parent["dannyb500_GC"].GC)
 
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -24,8 +21,8 @@ local function HasProperty(Instance: BasePart, Property: string)
 end
 
 local function FindStyle(Name: string)
-    Assert(ReplicatedStorage:FindFirstChild("Design"),`COULD NOT FIND STYLE DESIGN FOLDER`)
-    Assert(ReplicatedStorage.Design:FindFirstChild(Name),`COULD NOT FIND STYLE SHEET {Name}`)
+    assert(ReplicatedStorage:FindFirstChild("Design"),`COULD NOT FIND STYLE DESIGN FOLDER`)
+    assert(ReplicatedStorage.Design:FindFirstChild(Name),`COULD NOT FIND STYLE SHEET {Name}`)
     return ReplicatedStorage.Design[Name];
 end
 
@@ -43,8 +40,15 @@ local function SetStyle(self,SGUI: ScreenGui,Style: StyleSheet)
 end
 
 function UI:ConnectEnum(Instance: UIBase,Type: string,fnc:() -> nil)
-    print(Instance, Type, fnc)
     self._Maid:Connect(Instance[Type],fnc)
+end
+
+function UI:ForEach(Table: {any}, fnc:() -> ())
+	local Array = {};
+	for i,v in Table do
+		table.insert(Array, fnc(i, v))
+	end;
+	return Array
 end
 
 function UI:ApplyProperties(Instance: BasePart, Properties: {[string]: any})
@@ -74,19 +78,17 @@ function UI.new()
     self.Enum = {
         Activated = "MouseButton1Click";
         Enter = "MouseEnter";
-        Leave = "MouseLeave";
+		Leave = "MouseLeave";
+		PropertyChanged = "GetPropertyChangedSignal"
     };
 
     self._Style = nil;
 
     self._Maid = Maid.new();
-    self._Mem = Memory.new();
-    self._Stack = Stack.new();
     self._Signal = Signal.new();
-    self._Parent = self.Screen;
-    
-    print(self)
-    
+	self._Parent = self.Screen;
+	self._CurrentParent = self._Parent;
+	
     return self
 end
 
@@ -101,22 +103,39 @@ end
 
 function UI:CreateElement(Object: string,Properties: {any}, Children: {})
     local Ins = Instance.new(Object);
-	self:ApplyProperties(Ins,Properties)
+	self:ApplyProperties(Ins,Properties);
     
     Ins.Parent = self._Parent;
+	self._CurrentParent = Ins
     
     if not Children then
         return Ins;
     end
-
     for i, v: {} in Children do
+		if typeof(v) == "table" then
+			if v["Instance"] then
+				v.Instance.Parent = Ins;
+				continue
+			end
+			for _,k in v do
+				k.Instance.Parent = Ins
+			end
+		end
         if typeof(v) ~= "Instance" then
             continue;
-        end
-        v.Parent = Ins;
+		end
+		print(v)
+		v.Parent = Ins;
     end
+	self._CurrentParent = Ins
 
-    return Ins
+	return {
+		Instance = Ins;
+		mount = function(self, meta: {})
+			Ins.Parent = if not meta then self.Instance else meta.Instance;
+			return self
+		end,
+	}
 end
 
 function UI:Destroy()

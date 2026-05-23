@@ -1,5 +1,5 @@
 local Trove = require("../../../OpenSource/Trove")
-local Signal = require("../../dannyb500_Signal@0.0.1/Signal")
+local Signal = require("../../dannyb500_Signal/Signal")
 
 local Keyboard = {}
 Keyboard.__index = Keyboard

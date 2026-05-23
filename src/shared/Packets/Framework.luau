@@ -8,7 +8,7 @@
 local Shared = {}
 Shared.__index = Shared
 
-local Remote = require("./_index/dannyb500_Signal@0.0.1/Remote")
+local Remote = require("./_index/dannyb500_Signal/Remote")
 
 -------------------------
 -- SERVICES --
@@ -21,8 +21,8 @@ local RunService = game:GetService("RunService")
 local isServer = RunService:IsServer() and "Server" or "Client"
 local ignoreServer = false -- false: yeidls until server modules have loaded
 local requireSubModules = true;
-local deferInit = true;
-local deferStart = true;
+local deferInit = false;
+local deferStart = false;
 
 local Index = script.Parent:WaitForChild("_index")
 
@@ -111,6 +111,7 @@ local function Construct(Modules)
 			for Key, Value in Module do
 				if typeof(Value) == "table" and Value["_SIGNAL"] then
 					rawset(Module, Key, Remote.new(Name, Key, Value["_SIGNAL"]))
+					warn(`Created Remote for {Name} {Key}`)
 				end
 			end
 		end
