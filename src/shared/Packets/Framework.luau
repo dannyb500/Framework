@@ -19,10 +19,10 @@ local RunService = game:GetService("RunService")
 -- VARIABLES --
 -------------------------
 local isServer = RunService:IsServer() and "Server" or "Client"
-local ignoreServer = false -- false: yeidls until server modules have loaded
-local requireSubModules = true;
-local deferInit = false;
-local deferStart = false;
+local ignoreServer = false -- false: yields until server modules have loaded
+local requireSubModules = true
+local deferInit = true
+local deferStart = true
 
 local Index = script.Parent:WaitForChild("_index")
 
@@ -45,10 +45,9 @@ local function CanLoad()
 			return true
 		end
 
-		repeat
-			task.wait(0.1)
-			print("Waiting for server...")
-		until script:GetAttribute("CanStart") == true
+		if not script:GetAttribute("CanStart") then
+			script:GetAttributeChangedSignal("CanStart"):Wait()
+		end
 		return true
 	end
 end
@@ -60,13 +59,18 @@ end
 ]]
 local function AttemptRequire(Module: ModuleScript)
 	local Loaded = nil
-	xpcall(function()
-		-- task.spawn(function()
-		Loaded = require(Module)
-		-- end)
-	end, function()
-		error(`Failed to require {Module.Name} : {debug.traceback()}`)
+
+	local ok, result = xpcall(function()
+		return require(Module)
+	end, function(err)
+		return `Failed to require {Module.Name}: {err}\n{debug.traceback()}`
 	end)
+	if not ok then
+		error(result, 0)
+	end
+
+	Loaded = result
+
 	if Loaded then
 		if typeof(Loaded) == "function" then
 			return Loaded
@@ -111,7 +115,6 @@ local function Construct(Modules)
 			for Key, Value in Module do
 				if typeof(Value) == "table" and Value["_SIGNAL"] then
 					rawset(Module, Key, Remote.new(Name, Key, Value["_SIGNAL"]))
-					warn(`Created Remote for {Name} {Key}`)
 				end
 			end
 		end
@@ -164,15 +167,14 @@ local function LoadModules(Containers: { Folder })
 
 	for _, Container: Folder in Containers do
 		for _, Module: Instance in Container:GetChildren() do
-
 			if Module:IsA("Folder") and requireSubModules then
-				local Success = LoadModules({Module})
+				local Success = LoadModules({ Module })
 				if not Success then
 					continue
 				end
 
-				for i,v in Success do
-					Modules[i] = v;	
+				for i, v in Success do
+					Modules[i] = v
 				end
 			end
 

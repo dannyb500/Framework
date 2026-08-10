@@ -100,14 +100,15 @@ local function drawText(position: Vector3,size: number, ...)
 	WFH:AddText(position,formatText(Args),size);
 end
 
-local function drawBox(position: Vector3, size: number, lookAt: Vector3 | nil) 
-	local halfSize = size / 2 
-
+local function drawBox(position: Vector3, size: Vector2 | number, lookAt: Vector3 | nil) 
+	size = if typeof(size) == "number" then Vector2.new(size,size) else size
+	local halfSize = typeof(size) == "number" and size / 2 or size / 2
+	
 	local pathArray = {
-		Vector3.new(-halfSize, halfSize, 0),
-		Vector3.new(halfSize, halfSize, 0),
-		Vector3.new(halfSize, -halfSize, 0),
-		Vector3.new(-halfSize, -halfSize, 0)
+		Vector3.new(-halfSize.X, halfSize.Y, 0),
+		Vector3.new(halfSize.X, halfSize.Y, 0),
+		Vector3.new(halfSize.X, -halfSize.Y, 0),
+		Vector3.new(-halfSize.X, -halfSize.Y, 0)
 	}
 
 	local transform = if lookAt then CFrame.lookAt(position,lookAt) else CFrame.new(position)
@@ -119,7 +120,7 @@ local function drawBox(position: Vector3, size: number, lookAt: Vector3 | nil)
 	WFH:AddPath(pathArray, true)
 end
 
-local function fillBoxAnimation(position: Vector3,Size: number, lookAt: Model | BasePart,Cancel,Result ) 
+local function fillBoxAnimation(position: Vector3, Size: number, lookAt: Vector3 | nil, Cancel, Result) 
 	assert(WFH,"WFH not found");
 	local CurrentY = -Size
 	local C = false;
@@ -130,24 +131,22 @@ local function fillBoxAnimation(position: Vector3,Size: number, lookAt: Model | 
 		end)
 	end
 
+	local transform = if lookAt then CFrame.lookAt(position, lookAt) else CFrame.new(position)
 
 	task.defer(function()
 		local halfSize = Size / 2;
 		local Draw = {};
 		repeat
 			for y = -Size, CurrentY, 0.01 do
-				local Look = if typeof(lookAt) == "Model" then lookAt:GetPivot().Position else lookAt
-				local transform = if lookAt then CFrame.lookAt(position, Look) else CFrame.new(position)
-
 				table.insert(Draw,{
 					Vector3.new(-halfSize, y/2, 0),
 					Vector3.new(halfSize, y/2, 0)
 				})
 
 				local Calc = {}
-				for i,v in Draw do
-					Calc[1] = transform * v[1]
-					Calc[2] = transform * v[2]
+				for i, v in Draw do
+					table.insert(Calc, transform:PointToWorldSpace(v[1]))
+					table.insert(Calc, transform:PointToWorldSpace(v[2]))
 				end
 				WFH_STATIC:AddPath(Calc, false)
 			end
@@ -275,11 +274,18 @@ function WFH_MODULE:DrawText(Position: Vector3,Size: number, ...: string)
 	end)
 end
 
-function WFH_MODULE:DrawBox(Position: Vector3, Size: number,LookAt: Vector3 | nil)
+function WFH_MODULE:DrawBox(Position: Vector3, Size: number, LookAt: Vector3 | nil)
 	WIRE_MEM:Insert(function()
 		drawBox(Position, Size,LookAt);
 	end)
 end
+
+function WFH_MODULE:Draw(Position: Vector3, Size: Vector2, LookAt: Vector3 | nil)
+	WIRE_MEM:Insert(function()
+		drawWH(Position, Size,LookAt);
+	end)
+end
+
 
 function WFH_MODULE:DrawSphere(Position: Vector3, Radius: number, Segments: number)
 	WIRE_MEM:Insert(function()
@@ -315,6 +321,10 @@ function WFH_MODULE:DrawRay(Origin: Vector3,Direction: Vector3, Raycast: Raycast
 	WIRE_MEM:Insert(function()
 		drawRay(Origin,Direction,Raycast)
 	end)
+end
+
+function WFH_MODULE:SetThickness(Number: number)
+	WFH.Thickness = Number
 end
 
 --------------------------------------
